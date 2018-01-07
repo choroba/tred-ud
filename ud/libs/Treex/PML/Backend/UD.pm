@@ -21,28 +21,53 @@ sub test {
 
 sub read {
     my ($fh, $doc) = @_;
+    my $schema = 'Treex::PML::Factory'->createPMLSchema({
+        filename => 'ud_schema.xml',
+        use_resources => 1});
+    $doc->changeMetaData('schema', $schema);
+
     my $root;
     while (<$fh>) {
+        chomp;
         if (/^#\s*sent_id\s=\s*(\S+)/) {
             my $sent_id = $1;
+            substr $sent_id, 0, 0, 'sent' if $sent_id =~ /^[0-9]/;
             $doc->append_tree(
-                $root = 'Treex::PML::Node'->new({id => $sent_id}),
+                $root = 'Treex::PML::Factory'->createTypedNode(
+                    'ud.sent.type', $schema, {id => $sent_id}
+                ),
                 $doc->lastTreeNo);
+
         } elsif (/^#\s*text\s*=\s*(.*)/) {
             $root->{text} = $1;
+
         } elsif (/^$/) {
             _create_structure($root);
+
         } elsif (/^#/) {
+            # Skip comments
+
         } else {
             my ($n, $form, $lemma, $upos, $xpos, $feats, $head, $deprel,
-                $deps, $mis) = split /\t/;
+                $deps, $misc) = map '_' eq $_ ? undef : $_, split /\t/;
             next if $n =~ /-/;  # TODO: multiword
 
-            'Treex::PML::Node'->new({
-                form => $form,
-                ord => $n,
-                head => $head})
-            ->paste_on($root, 'ord');
+            $feats = { split /=|\|/, ($feats // "") };
+            $misc = [ split /\|/, ($misc // "") ];
+
+            'Treex::PML::Factory'->createTypedNode('ud.node.type', $schema,
+                {
+                    form    => $form,
+                    lemma   => $lemma,
+                    ord     => $n,
+                    deprel  => $deprel,
+                    upostag => $upos,
+                    xpostag => $xpos,
+                    feats   => $feats,
+                    deps    => $deps,
+                    misc    => 'Treex::PML::Factory'->createList($misc),
+                    head    => $head}
+                )->paste_on($root, 'ord');
         }
     }
 }

@@ -1,0 +1,6 @@
+context: 
+hint: 
+text: ${text}
+
+node: ${id}${form}<? $${lemma} && $${lemma} ne $${form} ? '#{gray}.${lemma}' : "" ?>
+node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}

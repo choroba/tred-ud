@@ -1,3 +1,0 @@
-context: .*
-text: ${text}
-node: ${id}${form}
