@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tred_extension xmlns="http://ufal.mff.cuni.cz/pdt/pml/" install_size="0">
+<tred_extension xmlns="http://ufal.mff.cuni.cz/pdt/pml/" install_size="57521">
   <head>
     <schema href="tred_extension_schema.xml"/>
   </head>
   <pkgname>ud</pkgname>
   <icon>icons/ud.png</icon>
-  <repository href="http://ufal.mff.cuni.cz/tred/extensions/core/"/>
+  <repository href="http://ufal.mff.cuni.cz/tred/extensions/external/"/>
   <title>TrEd Extension to Work with Universal Dependencies</title>
   <version>0.01</version>
   <copyright year="2018">Jan Štěpánek</copyright>
