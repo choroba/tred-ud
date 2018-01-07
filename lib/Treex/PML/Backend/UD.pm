@@ -57,8 +57,7 @@ sub _create_structure {
     my ($root) = @_;
     my %ord = map +($_->{ord} => $_), $root->children;
     for my $node ($root->children) {
-        $node->cut;
-        $node->paste_on($ord{ $node->{head} } || $root, 'ord');
+        $node->cut->paste_on($ord{ $node->{head} } || $root, 'ord');
     }
 }
 
