@@ -40,7 +40,7 @@
       <member name="upostag"><cdata format="any"/></member>
       <member name="xpostag"><cdata format="any"/></member>
       <member name="feats" type="ud.feats.type"/>
-      <member name="deps"><cdata format="any"/></member>
+      <member name="deps" type="ud.deps.type"/>
       <member name="misc" type="ud.misc.type"/>
     </structure>
   </type>
@@ -170,6 +170,15 @@
 
   <type name="ud.misc.type">
     <list ordered="1"><cdata format="any"/></list>
+  </type>
+
+  <type name="ud.deps.type">
+    <list ordered="1">
+      <container>
+        <attribute name="func"><cdata format="any"/></attribute>
+        <cdata format="nonNegativeInteger"/>
+      </container>
+    </list>
   </type>
 
 </pml_schema>

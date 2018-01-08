@@ -54,6 +54,11 @@ sub read {
 
             $feats = { split /=|\|/, ($feats // "") };
             $misc = [ split /\|/, ($misc // "") ];
+            $deps = [ map {
+                my ($parent, $func) = split /:/;
+                'Treex::PML::Factory'->createContainer($parent,
+                                                       {func => $func});
+            } split /\|/, ($deps // "") ];
 
             'Treex::PML::Factory'->createTypedNode('ud.node.type', $schema,
                 {
@@ -64,7 +69,7 @@ sub read {
                     upostag => $upos,
                     xpostag => $xpos,
                     feats   => $feats,
-                    deps    => $deps,
+                    deps    => 'Treex::PML::Factory'->createList($deps),
                     misc    => 'Treex::PML::Factory'->createList($misc),
                     head    => $head}
                 )->paste_on($root, 'ord');

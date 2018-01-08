@@ -7,13 +7,11 @@ node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}
 
 style: <?
     if ($this->{deps}) {
-        my @deps = grep {
-            (split /:/)[0] != $this->parent->{ord}
-        } split /\|/, $this->{deps};
+        my @deps = grep $_->{'#content'} != $this->parent->{ord},
+            ListV($this->{deps});
 
-        my $coords =
-        join "&", 'n,n,p,p', map {
-            my ($parent, $func) = split /:/;
+        my $coords = join '&', 'n,n,p,p', map {
+            my ($parent, $func) = ($_->{'#content'}, $_->{func});
             $parent ? "n,n,x[ord=$parent],y[ord=$parent]"
                     : 'n,n,x[! $this->root !],y[! $this->root !]'
         } @deps;
