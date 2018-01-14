@@ -7,20 +7,23 @@ node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}
 
 style: <?
     if ($this->{deps}) {
-        my @deps = grep $_->{'#content'} != $this->parent->{ord},
-            ListV($this->{deps});
+        my @deps = grep $this->parent->{ord}
+                        && $_->{'#content'} ne $this->parent->{ord},
+                   ListV($this->{deps});
 
         my $coords = join '&', 'n,n,p,p', map {
             my ($parent, $func) = ($_->{'#content'}, $_->{func});
-            $parent ? "n,n,x[ord=$parent],y[ord=$parent]"
-                    : 'n,n,x[! $this->root !],y[! $this->root !]'
+            my $expression = $parent ? "[ord=$parent]" : '[! $this->root !]';
+            "n,n,(x$expression+xn)/2,(y$expression+yn)/2.5,x$expression,y$expression"
         } @deps;
 
         my $arrows = join '&', 'none', ('last') x @deps;
-        my $colours = join '&', '', ('orange') x @deps;
+        my $colours = join '&', "", ('orange') x @deps;
         my $widths = join '&', '2', ('1') x @deps;
+        my $smooth = join '&', '0', ('1') x @deps;
+        my $hints = join '&', "", map "$_->{func}", @deps;
 
         "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
-        . "#{Line-width:$widths}"
+        . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}";
     }
 ?>
