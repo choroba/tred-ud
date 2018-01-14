@@ -56,4 +56,12 @@
                            ? () : [ ' ' ])
                      } @nodes ]
     }
+
+
+    sub get_nodelist_hook {
+        my ($doc, $treeno, $current, $show) = @_;
+        my $tree = $doc->tree($treeno);
+        return [[$root, sort { $a->{ord} <=> $b->{ord} } $tree->descendants],
+                $current]
+    }
 }
