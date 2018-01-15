@@ -144,27 +144,44 @@
       <member name="VerbType"><cdata format="any"/></member>
       <member name="Voice"><cdata format="any"/></member>
       <member name="Xtra"><cdata format="any"/></member>
-<!--
-      <member name="id/mood"><cdata format="any"/></member>
-      <member name="id/number"><cdata format="any"/></member>
-      <member name="id/proper"><cdata format="any"/></member>
-      <member name="id/voice"><cdata format="any"/></member>
-      <member name="ko/case"><cdata format="any"/></member>
-      <member name="ko/form"><cdata format="any"/></member>
-      <member name="ko/formality"><cdata format="any"/></member>
-      <member name="ko/honorific"><cdata format="any"/></member>
-      <member name="ko/mood"><cdata format="any"/></member>
-      <member name="ko/number"><cdata format="any"/></member>
-      <member name="ko/person"><cdata format="any"/></member>
-      <member name="ko/proper"><cdata format="any"/></member>
-      <member name="ko/tense"><cdata format="any"/></member>
-      <member name="ko/voice"><cdata format="any"/></member>
-      <member name="th/aspect"><cdata format="any"/></member>
-      <member name="th/mood"><cdata format="any"/></member>
-      <member name="th/person"><cdata format="any"/></member>
-      <member name="th/proper"><cdata format="any"/></member>
-      <member name="th/voice"><cdata format="any"/></member>
--->
+
+      <member name="id" type="ud.feats.id.type"/>
+      <member name="ko" type="ud.feats.ko.type"/>
+      <member name="th" type="ud.feats.th.type"/>
+    </structure>
+  </type>
+
+  <type name="ud.feats.id.type">
+    <structure>
+      <member name="mood"><cdata format="any"/></member>
+      <member name="number"><cdata format="any"/></member>
+      <member name="proper"><cdata format="any"/></member>
+      <member name="voice"><cdata format="any"/></member>
+    </structure>
+  </type>
+
+  <type name="ud.feats.ko.type">
+    <structure>
+      <member name="case"><cdata format="any"/></member>
+      <member name="form"><cdata format="any"/></member>
+      <member name="formality"><cdata format="any"/></member>
+      <member name="honorific"><cdata format="any"/></member>
+      <member name="mood"><cdata format="any"/></member>
+      <member name="number"><cdata format="any"/></member>
+      <member name="person"><cdata format="any"/></member>
+      <member name="proper"><cdata format="any"/></member>
+      <member name="tense"><cdata format="any"/></member>
+      <member name="voice"><cdata format="any"/></member>
+    </structure>
+  </type>
+
+  <type name="ud.feats.th.type">
+    <structure>
+      <member name="aspect"><cdata format="any"/></member>
+      <member name="mood"><cdata format="any"/></member>
+      <member name="person"><cdata format="any"/></member>
+      <member name="proper"><cdata format="any"/></member>
+      <member name="voice"><cdata format="any"/></member>
     </structure>
   </type>
 
