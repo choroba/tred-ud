@@ -58,10 +58,15 @@ sub read {
         } else {
             my ($n, $form, $lemma, $upos, $xpos, $feats, $head, $deprel,
                 $deps, $misc) = map '_' eq $_ ? undef : $_, split /\t/;
-            next if $n =~ /-/;  # TODO: multiword
+
+            $misc = 'Treex::PML::Factory'->createList(
+                [ split /\|/, ($misc // "") ]);
+            if ($n =~ /-/) {
+                _create_multiword($n, $root, $misc, $form);
+                next
+            }
 
             $feats = { split /=|\|/, ($feats // "") };
-            $misc = [ split /\|/, ($misc // "") ];
             $deps = [ map {
                 my ($parent, $func) = split /:/;
                 'Treex::PML::Factory'->createContainer($parent,
@@ -78,7 +83,7 @@ sub read {
                     xpostag => $xpos,
                     feats   => $feats,
                     deps    => 'Treex::PML::Factory'->createList($deps),
-                    misc    => 'Treex::PML::Factory'->createList($misc),
+                    misc    => $misc,
                     head    => $head}
                 )->paste_on($root, 'ord');
         }
@@ -100,6 +105,18 @@ sub write {
         print {$fh} "# text = ", $root->{text}, "\n" if exists $root->{text};
         print {$fh} map "#$_\n", @{ $root->{comment} };
         for my $node (sort { $a->{ord} <=> $b->{ord} } $root->descendants) {
+            if (my ($mw_idx)
+                = grep $root->{multiword}[$_]{nodes}[0] == $node->{ord},
+                  0 .. $#{ $root->{multiword} }
+            ) {
+                my $mw = $root->{multiword}[$mw_idx];
+                print {$fh} join("\t",
+                                 "$mw->{nodes}[0]-$mw->{nodes}[-1]",
+                                 $mw->{form},
+                                 ('_') x 7,
+                                 _serialize_misc($mw->{misc})
+                             ), "\n";
+            }
             print {$fh} join "\t",
                 @$node{qw{ ord form lemma upostag xpostag }},
                 join('|',
@@ -109,13 +126,33 @@ sub write {
                 $node->parent->{ord} || '0',
                 $node->{deprel} || '_',
                 _serialize_deps($node->{deps}),
-                join('|', @{ $node->{misc} }) || '_'
+                _serialize_misc($node->{misc}),
             ;
             print {$fh} "\n";
         }
         print {$fh} "\n";
     }
     return 1
+}
+
+
+sub _serialize_misc {
+    my ($misc) = @_;
+    return join('|', @{ $misc }) || '_'
+}
+
+
+sub _create_multiword {
+    my ($n, $root, $misc, $form) = @_;
+    my ($from, $to) = split /-/, $n;
+    $root->{multiword} = 'Treex::PML::Factory'->createList([
+        @{ $root->{multiword} || [] },
+        'Treex::PML::Factory'->createStructure(
+            { nodes => 'Treex::PML::Factory'->createList([ $from .. $to ]),
+              misc => $misc,
+              form => $form}
+        )
+    ]);
 }
 
 

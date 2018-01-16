@@ -64,4 +64,19 @@
         return [[$root, sort { $a->{ord} <=> $b->{ord} } $tree->descendants],
                 $current]
     }
+
+
+    my @colours = qw( red orange pink magenta violet brown );
+    sub after_redraw_hook {
+        return unless $root->{multiword};
+
+        my %by_ord = map +( $_->{ord} => $_ ), $root->descendants;
+        my @groups = map [ @by_ord{ @{ $_->{nodes} } } ],
+                     @{ $root->{multiword} };
+        TrEd::NodeGroups::draw_groups(
+            $grp,
+            \@groups,
+            { colors => [ (@colours) x ( 1 + @groups / @colours ) ] }
+        );
+    }
 }

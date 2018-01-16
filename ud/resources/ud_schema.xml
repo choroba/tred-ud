@@ -30,6 +30,17 @@
           <cdata format="any"/>
         </list>
       </member>
+      <member name="multiword">
+        <list>
+          <structure>
+            <member name="nodes">
+              <list ordered="1"><cdata format="any"/></list>
+            </member>
+            <member name="form"><cdata format="any"/></member>
+            <member name="misc" type="ud.misc.type"/>
+          </structure>
+        </list>
+      </member>
     </structure>
   </type>
 
