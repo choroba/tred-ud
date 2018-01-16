@@ -31,7 +31,7 @@ sub read {
         chomp;
         if (/^#\s*sent_id\s=\s*(\S+)/) {
             my $sent_id = $1;
-            substr $sent_id, 0, 0, 'sent' if $sent_id =~ /^[0-9]/;
+            substr $sent_id, 0, 0, 'PML-' if $sent_id =~ /^(?:[0-9]|PML-)/;
             $doc->append_tree(
                 $root = 'Treex::PML::Factory'->createTypedNode(
                     'ud.sent.type', $schema, {id => $sent_id}
@@ -86,6 +86,7 @@ sub read {
 sub write {
     my ($fh, $doc) = @_;
     for my $root ($doc->trees) {
+        $root->{id} =~ s/^PML-//;
         print {$fh} "# sent_id = ", $root->{id}, "\n";
         print {$fh} "# text = ", $root->{text}, "\n" if exists $root->{text};
         for my $node (sort { $a->{ord} <=> $b->{ord} } $root->descendants) {
