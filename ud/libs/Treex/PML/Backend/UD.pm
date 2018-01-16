@@ -80,6 +80,36 @@ sub read {
 
 sub write {
     my ($fh, $doc) = @_;
+    for my $root ($doc->trees) {
+        print {$fh} "# sent_id = ", $root->{id}, "\n";
+        print {$fh} "# text = ", $root->{text}, "\n" if exists $root->{text};
+        for my $node (sort { $a->{ord} <=> $b->{ord} } $root->descendants) {
+            print {$fh} join "\t",
+                @$node{qw{ ord form lemma upostag xpostag }},
+                join('|',
+                     map "$_=$node->{feats}{$_}",
+                     sort { lc $a cmp lc $b }
+                     keys %{ $node->{feats} }) || '_',
+                $node->parent->{ord} || '0',
+                $node->{deprel} || '_',
+                _serialize_deps($node->{deps}),
+                join('|', @{ $node->{misc} }) || '_'
+            ;
+            print {$fh} "\n";
+        }
+        print {$fh} "\n";
+    }
+    return 1
+}
+
+
+sub _serialize_deps {
+    my ($deps) = @_;
+    return '_' unless @$deps;
+    return join '|',
+           map "$_->{'#content'}:$_->{func}",
+           sort { $a->{'#content'} <=> $b->{'#content'} }
+           @$deps;
 }
 
 
