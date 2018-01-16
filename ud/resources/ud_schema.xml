@@ -50,7 +50,7 @@
         <list type="ud.node.type" ordered="1"/>
       </member>
       <member name="ord" role="#ORDER" required="1">
-        <cdata format="nonNegativeInteger"/>
+        <cdata format="number"/>
       </member>
       <member name="form"><cdata format="any"/></member>
       <member name="deprel"><cdata format="any"/></member>

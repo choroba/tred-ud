@@ -24,6 +24,8 @@ style: <?
         my $hints = join '&', "", map "$_->{func}", @deps;
 
         "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
-        . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}";
+        . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}"
+        . ('#{Oval-fill:whitesmoke}#{Oval-outline:cyan}' x $this->{ord} =~ /\./);
     }
+
 ?>
