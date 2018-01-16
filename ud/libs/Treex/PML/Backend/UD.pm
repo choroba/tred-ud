@@ -29,14 +29,17 @@ sub read {
     my $root;
     while (<$fh>) {
         chomp;
+        if (/^#/ && ! $root) {
+            $root = 'Treex::PML::Factory'->createTypedNode(
+                    'ud.sent.type', $schema, {}
+            );
+        }
+
         if (/^#\s*sent_id\s=\s*(\S+)/) {
             my $sent_id = $1;
             substr $sent_id, 0, 0, 'PML-' if $sent_id =~ /^(?:[0-9]|PML-)/;
-            $doc->append_tree(
-                $root = 'Treex::PML::Factory'->createTypedNode(
-                    'ud.sent.type', $schema, {id => $sent_id}
-                ),
-                $doc->lastTreeNo);
+            $root->{id} = $sent_id;
+            $doc->append_tree($root, $doc->lastTreeNo);
 
         } elsif (/^#\s*text\s*=\s*(.*)/) {
             $root->{text} = $1;
@@ -45,8 +48,12 @@ sub read {
             _create_structure($root);
             undef $root;
 
+        } elsif (/^#\s+new(doc|par)(?:\s+id = (.*))?/) {
+            $root->{$1} = $2;
+
         } elsif (/^#/) {
-            # Skip comments
+            $root->{comment} = 'Treex::PML::Factory'->createList([
+                @{ $root->{comment} || [] }, substr $_, 1 ]);
 
         } else {
             my ($n, $form, $lemma, $upos, $xpos, $feats, $head, $deprel,
@@ -86,9 +93,12 @@ sub read {
 sub write {
     my ($fh, $doc) = @_;
     for my $root ($doc->trees) {
+        _serialize_doc_and_par($root, $fh);
+
         $root->{id} =~ s/^PML-//;
         print {$fh} "# sent_id = ", $root->{id}, "\n";
         print {$fh} "# text = ", $root->{text}, "\n" if exists $root->{text};
+        print {$fh} map "#$_\n", @{ $root->{comment} };
         for my $node (sort { $a->{ord} <=> $b->{ord} } $root->descendants) {
             print {$fh} join "\t",
                 @$node{qw{ ord form lemma upostag xpostag }},
@@ -106,6 +116,18 @@ sub write {
         print {$fh} "\n";
     }
     return 1
+}
+
+
+sub _serialize_doc_and_par {
+    my ($root, $fh) = @_;
+    for my $attr (qw( doc par )) {
+        if (exists $root->{$attr}) {
+            print {$fh} "# new$attr";
+            print {$fh} ' id = ', $root->{$attr} if length $root->{$attr};
+            print {$fh} "\n";
+        };
+    }
 }
 
 

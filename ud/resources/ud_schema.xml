@@ -23,6 +23,13 @@
         <list type="ud.node.type" ordered="1"/>
       </member>
       <member name="ord" role="#ORDER"><constant>0</constant></member>
+      <member name="doc"><cdata format="any"/></member>
+      <member name="par"><cdata format="any"/></member>
+      <member name="comment">
+        <list ordered="1">
+          <cdata format="any"/>
+        </list>
+      </member>
     </structure>
   </type>
 
