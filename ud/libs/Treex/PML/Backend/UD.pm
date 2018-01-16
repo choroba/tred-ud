@@ -43,6 +43,7 @@ sub read {
 
         } elsif (/^$/) {
             _create_structure($root);
+            undef $root;
 
         } elsif (/^#/) {
             # Skip comments
@@ -74,6 +75,10 @@ sub read {
                     head    => $head}
                 )->paste_on($root, 'ord');
         }
+    }
+    if ($root) {
+        _create_structure($root);
+        warn "Emtpy line missing at the end of input\n";
     }
 }
 
