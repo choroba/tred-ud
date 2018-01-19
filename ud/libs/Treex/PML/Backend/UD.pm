@@ -66,7 +66,7 @@ sub read {
                 next
             }
 
-            $feats = { split /=|\|/, ($feats // "") };
+            $feats = _create_feats($feats);
             $deps = [ map {
                 my ($parent, $func) = split /:/;
                 'Treex::PML::Factory'->createContainer($parent,
@@ -120,9 +120,8 @@ sub write {
             print {$fh} join "\t",
                 @$node{qw{ ord form lemma upostag xpostag }},
                 join('|',
-                     map "$_=$node->{feats}{$_}",
-                     sort { lc $a cmp lc $b }
-                     keys %{ $node->{feats} }) || '_',
+                     map "$_->{name}=$_->{value}", @{ $node->{feats} }
+                ) || '_',
                 $node->parent->{ord} || '0',
                 $node->{deprel} || '_',
                 _serialize_deps($node->{deps}),
@@ -139,6 +138,19 @@ sub write {
 sub _serialize_misc {
     my ($misc) = @_;
     return join('|', @{ $misc }) || '_'
+}
+
+
+sub _create_feats {
+    my ($string) = @_;
+    return [] if ! defined $string || ! length $string;
+    my @feats;
+    for (split /\|/, $string) {
+        my ($name, $value) = split /=/, $_, 2;
+        push @feats, 'Treex::PML::Factory'->createStructure(
+            { name => $name, value => $value });
+    }
+    return 'Treex::PML::Factory'->createList(\@feats)
 }
 
 
