@@ -7,6 +7,12 @@
 
     use strict;
 
+    unshift @TrEd::Config::open_types, [
+        'Universal Dependencies',
+        [ '.conllu' ],
+    ] unless grep $_ eq 'Universal Dependencies',
+             @{ $TrEd::Config::open_types[0] };
+
     our $previous_stylesheet;
 
     my $ud_backend = 'Treex::PML::Backend::UD';
