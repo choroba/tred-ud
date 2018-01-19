@@ -211,7 +211,7 @@
     <list ordered="1">
       <container>
         <attribute name="func"><cdata format="any"/></attribute>
-        <cdata format="nonNegativeInteger"/>
+        <cdata format="number"/>
       </container>
     </list>
   </type>
