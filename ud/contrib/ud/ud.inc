@@ -72,7 +72,7 @@
     }
 
 
-    my @colours = qw( red orange pink magenta violet brown );
+    my @colours = qw( plum red orange pink magenta violet );
     sub after_redraw_hook {
         return unless $root->{multiword};
 
