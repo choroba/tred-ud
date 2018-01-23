@@ -72,6 +72,34 @@
     }
 
 
+    {   my @deprels = qw( acl advcl advmod amod appos aux case cc
+                          ccomp clf compound conj cop csubj dep det
+                          discourse dislocated expl fixed flat
+                          goeswith iobj list mark nmod nsubj nummod
+                          obj obl orphan parataxis punct reparandum
+                          root vocative xcomp );
+
+        sub do_edit_attr_hook {
+            my ($attr, $node) = @_;
+            return unless 'deprel' eq $attr;
+
+            my $dialog = $grp->toplevel->DialogBox(
+                -title   => 'Deprel',
+                -buttons => ['OK', 'Cancel']);
+            my $list = $dialog->add(
+                BrowseEntry => -label    => 'deprel',
+                               -variable => \(my $choice = $node->{deprel}))->pack;
+            $list->insert(end => $_) for @deprels;
+            my $reply = $dialog->Show;
+            if ('OK' eq $reply) {
+                $node->{deprel} = $choice;
+                Redraw();
+            }
+            return 'stop'
+        }
+    }
+
+
     {   my @colours = qw( plum red orange pink magenta violet );
         sub after_redraw_hook {
             return unless $root->{multiword};
