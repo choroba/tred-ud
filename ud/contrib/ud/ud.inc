@@ -72,17 +72,18 @@
     }
 
 
-    my @colours = qw( plum red orange pink magenta violet );
-    sub after_redraw_hook {
-        return unless $root->{multiword};
+    {   my @colours = qw( plum red orange pink magenta violet );
+        sub after_redraw_hook {
+            return unless $root->{multiword};
 
-        my %by_ord = map +( $_->{ord} => $_ ), $root->descendants;
-        my @groups = map [ @by_ord{ @{ $_->{nodes} } } ],
+            my %by_ord = map +( $_->{ord} => $_ ), $root->descendants;
+            my @groups = map [ @by_ord{ @{ $_->{nodes} } } ],
                      @{ $root->{multiword} };
-        TrEd::NodeGroups::draw_groups(
-            $grp,
-            \@groups,
-            { colors => [ (@colours) x ( 1 + @groups / @colours ) ] }
-        );
+            TrEd::NodeGroups::draw_groups(
+                $grp,
+                \@groups,
+                { colors => [ (@colours) x ( 1 + @groups / @colours ) ] }
+            );
+        }
     }
 }
