@@ -7,9 +7,9 @@ node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}
 
 style: <?
     if ($this->{deps}) {
-        my @deps = grep $this->parent->{ord}
-                        && $_->{'#content'} ne $this->parent->{ord},
-                   ListV($this->{deps});
+        my @deps = grep {
+            ($_->{'#content'} // 0) ne ($this->parent->{ord} // 0)
+       } ListV($this->{deps});
 
         my $coords = join '&', 'n,n,p,p', map {
             my ($parent, $func) = ($_->{'#content'}, $_->{func});
