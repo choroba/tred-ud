@@ -143,7 +143,8 @@ sub _serialize_misc {
 
 sub _create_feats {
     my ($string) = @_;
-    return [] if ! defined $string || ! length $string;
+    return 'Treex::PML::Factory'->createList([])
+        unless defined $string && length $string;
     my @feats;
     for (split /\|/, $string) {
         my ($name, $value) = split /=/, $_, 2;
