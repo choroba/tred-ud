@@ -55,12 +55,34 @@
       <member name="form"><cdata format="any"/></member>
       <member name="deprel"><cdata format="any"/></member>
       <member name="lemma"><cdata format="any"/></member>
-      <member name="upostag"><cdata format="any"/></member>
+      <member name="upostag" type="ud.upostag.type"/>
       <member name="xpostag"><cdata format="any"/></member>
       <member name="feats" type="ud.feats.type"/>
       <member name="deps" type="ud.deps.type"/>
       <member name="misc" type="ud.misc.type"/>
     </structure>
+  </type>
+
+  <type name="ud.upostag.type">
+    <choice>
+      <value>ADJ</value>
+      <value>ADP</value>
+      <value>ADV</value>
+      <value>AUX</value>
+      <value>CCONJ</value>
+      <value>DET</value>
+      <value>INTJ</value>
+      <value>NOUN</value>
+      <value>NUM</value>
+      <value>PART</value>
+      <value>PRON</value>
+      <value>PROPN</value>
+      <value>PUNCT</value>
+      <value>SCONJ</value>
+      <value>SYM</value>
+      <value>VERB</value>
+      <value>X</value>
+    </choice>
   </type>
 
   <type name="ud.feats.type">
