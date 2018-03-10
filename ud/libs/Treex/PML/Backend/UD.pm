@@ -12,10 +12,10 @@ use Treex::PML::IO qw{ open_backend close_backend };
 sub test {
     my ($filename, $encoding) = @_;
     open my $in, '<', $filename or die "$filename: $!";
-    my $first_line = <$in>;
-
-    return 1 if $first_line =~ /^# (?:new(?:doc|par)\s+id|sent_id|text) = /;
-    return
+    while (<$in>) {
+        return unless /^#/;
+        return 1 if /^# (?:new(?:doc|par)\s+id|sent_id|text) = /;
+    }
 }
 
 
