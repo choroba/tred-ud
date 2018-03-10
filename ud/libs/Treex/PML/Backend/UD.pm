@@ -57,7 +57,9 @@ sub read {
 
         } else {
             my ($n, $form, $lemma, $upos, $xpos, $feats, $head, $deprel,
-                $deps, $misc) = map '_' eq $_ ? undef : $_, split /\t/;
+                $deps, $misc) = split /\t/;
+            $_ eq '_' and undef $_
+                for $xpos, $feats, $deps, $misc;
 
             $misc = 'Treex::PML::Factory'->createList(
                 [ split /\|/, ($misc // "") ]);
