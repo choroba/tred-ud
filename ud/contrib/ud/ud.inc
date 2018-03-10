@@ -1,8 +1,6 @@
 # -*- cperl -*-
 {   package UD;
 
-    warn "ud.inc\n\n\n";
-
     BEGIN { import TredMacro }
 
     use strict;
