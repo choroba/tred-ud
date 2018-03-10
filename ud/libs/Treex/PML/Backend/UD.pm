@@ -118,7 +118,8 @@ sub write {
                              ), "\n";
             }
             print {$fh} join "\t",
-                @$node{qw{ ord form lemma upostag xpostag }},
+                @$node{qw{ ord form lemma upostag }},
+                $node->{xpostag} // '_',
                 join('|',
                      map "$_->{name}=$_->{value}", @{ $node->{feats} }
                 ) || '_',
