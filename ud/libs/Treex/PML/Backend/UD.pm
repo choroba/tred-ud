@@ -14,7 +14,7 @@ sub test {
     open my $in, '<', $filename or die "$filename: $!";
     while (<$in>) {
         return unless /^#/;
-        return 1 if /^# (?:new(?:doc|par)\s+id|sent_id|text) = /;
+        return 1 if /^# (?:new(?:doc|par)\s+id|sent_id|text)(?: =)? ./;
     }
 }
 
@@ -35,7 +35,7 @@ sub read {
             );
         }
 
-        if (/^#\s*sent_id\s=\s*(\S+)/) {
+        if (/^#\s*sent_id(?:\s*=\s*|\s+)(\S+)/) {
             my $sent_id = $1;
             substr $sent_id, 0, 0, 'PML-' if $sent_id =~ /^(?:[0-9]|PML-)/;
             $root->{id} = $sent_id;
