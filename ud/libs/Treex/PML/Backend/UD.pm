@@ -37,7 +37,7 @@ sub read {
 
         if (/^#\s*sent_id(?:\s*=\s*|\s+)(\S+)/) {
             my $sent_id = $1;
-            substr $sent_id, 0, 0, 'PML-' if $sent_id =~ /^(?:[0-9]|PML-)/;
+            substr $sent_id, 0, 0, 'PML-' if $sent_id !~ /^PML-/;
             $root->{id} = $sent_id;
             $doc->append_tree($root, $doc->lastTreeNo);
 
