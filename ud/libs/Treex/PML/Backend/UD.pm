@@ -1,6 +1,8 @@
 package Treex::PML::Backend::UD;
 
-=head1 Treex::PML::Backend::UD
+=head1 NAME
+
+Treex::PML::Backend::UD - TrEd backend to load and save UD files directly
 
 =cut
 
