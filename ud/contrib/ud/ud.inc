@@ -13,7 +13,7 @@
 
     our $previous_stylesheet;
 
-    my $ud_backend = 'Treex::PML::Backend::UD';
+    my $ud_backend = 'UD';
     AddBackend(Treex::PML::ImportBackends($ud_backend))
         unless grep $ud_backend eq $_, Backends();
 

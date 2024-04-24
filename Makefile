@@ -4,7 +4,8 @@ VALIDATE := $(HOME)/SVN/pml/bin/pml_validate
 
 documentation: ud/documentation/index.html
 
-ud/documentation/index.html: README.pod
+ud/documentation/index.html: README.pod ud/package.xml
+	update-copyright.pl $<
 	-mkdir ud/documentation
 	pod2html $< > $@
 
