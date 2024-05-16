@@ -142,13 +142,16 @@
         } else {
             return if $target == $parent;
 
-            my @deps = (_create_container(
-                            $target->{ord}, $node->{deprel}),
-                        grep $_->{func} ne $node->{deprel}
-                             && $_->content != $parent->{ord},
+            my $with_enhanced = ! (defined $mod && $mod eq 'Shift');
+            my @deps = ($with_enhanced
+                            ? _create_container($target->{ord},
+                                                $node->{deprel})
+                            : (),
+                        grep $_->content != $parent->{ord}
+                             && $_->content != $target->{ord},
                         ListV($node->{deps}));
             delete $node->{deps};
-            $node->{deps} = List(@deps);
+            $node->{deps} = List(@deps) if @deps;
             CutPaste($node, $target);
             ChangingFile(1);
         }

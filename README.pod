@@ -6,9 +6,32 @@ ud - TrEd extension to display and edit Universal Dependencies
 
 =head1 DESCRIPTION
 
-Use mouse to change the tree structure. Drop a node with C<Ctrl> to add or
-remove an enhanced dependency. Press C<d> to edit the current node's
-C<deprel>.
+=over 2
+
+=item *
+
+Dropping node C<a> on node C<b> attaches node C<a> to node C<b>. An enhanced
+dependency is created together with the basic one, if an enhanced dependency
+existed to the old or new parent, it is removed.
+
+=item *
+
+Dropping node C<a> on node C<b> while pressing C<Control> toggles existence of
+an enhanced dependency of node C<a> on node C<b>. If a dependency was created,
+the user is asked for its type. This works even when C<a> already is C<b>'s
+parent.
+
+=item *
+
+Dropping node C<a> on node C<b> while pressing C<Shift> attaches node C<a> to
+node C<b> without creating an enhanced dependency. If an enhanced dependency
+existed to the old or new parent, it is removed.
+
+=item *
+
+Pressing C<d> opens a dialog box to edit the current node's dependency type.
+If previously an enhanced dependency of the same type as the basic dependency
+existed, it is changed together with it, otherwise, it stays unchanged.
 
 =head1 INSTALLATION
 
