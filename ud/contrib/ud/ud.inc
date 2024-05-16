@@ -97,6 +97,45 @@
         }
     }
 
+    sub node_release_hook {
+        my ($node, $target, $mod) = @_;
+        ChangingFile(0);
+        return unless $target;
+
+        my $parent = $node->parent;
+        if (defined $mod && $mod =~ /^Control(?:-[23])?$/) {
+            if (grep $_->content == $target->{ord}, ListV($node->{deps})) {
+                ChangingFile(1);
+                $node->{deps} = List(grep $_->content != $target->{ord},
+                                     ListV($node->{deps}));
+            } else {
+                my $func = ($target == $parent)
+                               ? $node->{deprel}
+                               : QueryString('Enhanced Dependency', 'deprel');
+                return 'stop' unless length $func;
+
+                ChangingFile(1);
+                AddToList($node, 'deps',
+                          'Treex::PML::StandardFactory'->createContainer(
+                              $target->{ord}, {func => $func}));
+            }
+        } else {
+            return if $target == $parent;
+
+            my @deps = ('Treex::PML::StandardFactory'->createContainer(
+                              $target->{ord}, {func => $node->{deprel}}),
+                        grep $_->{func} ne $node->{deprel}
+                             && $_->content != $parent->{ord},
+                        ListV($node->{deps}));
+            delete $node->{deps};
+            $node->{deps} = List(@deps);
+            CutPaste($node, $target);
+            ChangingFile(1);
+        }
+        Redraw();
+        return 'stop'
+    }
+
 
     {   my @colours = qw( plum red orange pink magenta violet );
         sub after_redraw_hook {

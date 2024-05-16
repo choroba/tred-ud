@@ -8,21 +8,25 @@ node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}
 style: <?
     if ($this->{deps}) {
         my @deps = grep {
-            ($_->{'#content'} // 0) ne ($this->parent->{ord} // 0)
+            ($_->content // 0) ne ($this->parent->{ord} // 0)
        } ListV($this->{deps});
 
+       my $is_parent_in_deps = grep $_->content == $this->parent->{ord}
+                                    && $_->{func} eq $this->{deprel},
+                               ListV($this->{deps});
+
         my $coords = join '&', 'n,n,p,p', map {
-            my ($parent, $func) = ($_->{'#content'}, $_->{func});
+            my ($parent, $func) = ($_->content, $_->{func});
             my $expression = $parent ? "[ord=$parent]" : '[! $this->root !]';
             "n,n,(x$expression+xn)/2,(y$expression+yn)/2.5,x$expression,y$expression"
         } @deps;
 
         my $arrows = join '&', 'none', ('last') x @deps;
-        my $colours = join '&', "", ('orange') x @deps;
-        my $widths = join '&', '2', ('1') x @deps;
+        my $colours = join '&', ($is_parent_in_deps ? 'grey' : 'cyan'), ('orange') x @deps;
+        my $widths = join '&', ($is_parent_in_deps ? '2' : '1'), ('1') x @deps;
         my $smooth = join '&', '0', ('1') x @deps;
         my $hints = join '&', "", map "$_->{func}", @deps;
-        my $deco = join '&', "", map "shape=text;font=SansSerif 8;fill=brown;coords=n,n;start=10;text=$_->{func}", @deps;
+        my $deco = join '&', "", map "shape=text;font=SansSerif 9;fill=magenta;coords=n,n;start=20;text=$_->{func}", @deps;
 
         "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
         . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}"
