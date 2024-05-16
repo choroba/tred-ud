@@ -72,7 +72,7 @@ sub read {
 
             $feats = _create_feats($feats);
             $deps = [ map {
-                my ($parent, $func) = split /:/;
+                my ($parent, $func) = split /:/, $_, 2;
                 'Treex::PML::Factory'->createContainer($parent,
                                                        {func => $func});
             } split /\|/, ($deps // "") ];
