@@ -53,7 +53,9 @@
     sub get_value_line_hook {
         my ($doc, $tree_no) = @_;
         my $tree = $doc->tree($tree_no);
-        my @nodes = sort { $a->{ord} <=> $b->{ord} } $tree->descendants;
+        my @nodes = sort { $a->{ord} <=> $b->{ord} }
+                    grep $_->{ord} !~ /\./,
+                    $tree->descendants;
 
         return [ map { [ $_->{form}, $_ ],
                        ((grep 'SpaceAfter=No' eq $_, ListV($_->{misc}))

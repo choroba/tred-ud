@@ -2,7 +2,7 @@ context:
 hint: 
 text: ${text}
 
-node: ${id}${form}<? $${lemma} && $${lemma} ne $${form} ? '#{gray}.${lemma}' : "" ?>
+node: ${id}<? '#{grey}' if $${ord} =~ /\./ ?>${form}<? $${lemma} && $${lemma} ne $${form} ? '#{brown}.${lemma}' : "" ?>
 node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}
 
 style: <?
@@ -31,7 +31,7 @@ style: <?
         "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
         . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}"
         . "#{Line-decoration:$deco}"
-        . ('#{Oval-fill:whitesmoke}#{Oval-outline:cyan}' x $this->{ord} =~ /\./);
+        . ('#{Oval-fill:whitesmoke}#{CurrentOval-fill:pink}#{Oval-outline:cyan}' x $this->{ord} =~ /\./);
     }
 
 ?>
