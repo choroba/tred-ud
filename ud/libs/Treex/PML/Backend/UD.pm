@@ -13,7 +13,7 @@ use Treex::PML::IO qw{ open_backend close_backend };
 
 sub test {
     my ($filename, $encoding) = @_;
-    open my $in, '<', $filename or die "$filename: $!";
+    my $in = open_backend($filename, 'r', $encoding) or die "$filename: $!";
     while (<$in>) {
         return unless /^#/;
         return 1 if /^# (?:new(?:doc|par)\s+id|sent_id|text)(?: =)? ./;
