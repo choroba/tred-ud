@@ -8,6 +8,7 @@ ud/documentation/index.html: README.pod ud/package.xml
 	update-copyright.pl $<
 	-mkdir ud/documentation
 	pod2html $< > $@
+	rm pod2htmd.tmp
 
 release: ud
 	$(EXTENSION_DIR)/release_extension \
