@@ -2,6 +2,8 @@
 #ifndef ud
 #define ud
 #binding-context UD
+# bind edit_this_deprel to d menu Edit DepRel
+
 #include "ud.inc"
 #endif ud
 

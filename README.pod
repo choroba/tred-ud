@@ -6,8 +6,9 @@ ud - TrEd extension to display and edit Universal Dependencies
 
 =head1 DESCRIPTION
 
-Use mouse to change the tree structure. Drop a node with Ctrl to add
-or remove an enhanced dependency.
+Use mouse to change the tree structure. Drop a node with C<Ctrl> to add or
+remove an enhanced dependency. Press C<d> to edit the current node's
+C<deprel>.
 
 =head1 INSTALLATION
 

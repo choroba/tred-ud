@@ -72,6 +72,17 @@
     }
 
 
+    sub do_edit_attr_hook {
+        my ($attr, $node) = @_;
+        return unless 'deprel' eq $attr;
+        edit_deprel($node);
+    }
+
+    sub edit_this_deprel {
+        edit_deprel($this);
+    }
+
+
     {   my @deprels = qw( acl advcl advmod amod appos aux case cc
                           ccomp clf compound conj cop csubj dep det
                           discourse dislocated expl fixed flat
@@ -79,20 +90,28 @@
                           obj obl orphan parataxis punct reparandum
                           root vocative xcomp );
 
-        sub do_edit_attr_hook {
-            my ($attr, $node) = @_;
-            return unless 'deprel' eq $attr;
+        sub edit_deprel {
+            my ($node) = @_;
 
             my $dialog = $grp->toplevel->DialogBox(
                 -title   => 'Deprel',
                 -buttons => ['OK', 'Cancel']);
             my $list = $dialog->add(
                 BrowseEntry => -label    => 'deprel',
-                               -variable => \(my $choice = $node->{deprel}))->pack;
+                               -variable => \(my $choice = $node->{deprel})
+            )->pack;
             $list->insert(end => $_) for @deprels;
             my $reply = $dialog->Show;
             if ('OK' eq $reply) {
+                my $old_deprel = $node->{deprel};
                 $node->{deprel} = $choice;
+                $node->{deps} = List(map {
+                    ($_->content == $node->parent->{ord}
+                     && $_->{func} eq $old_deprel)
+                        ? _create_container($_->content, $choice)
+                        : $_
+                } ListV($node->{deps}));
+                ChangingFile(1);
                 Redraw();
             }
             return 'stop'
@@ -118,14 +137,13 @@
 
                 ChangingFile(1);
                 AddToList($node, 'deps',
-                          'Treex::PML::StandardFactory'->createContainer(
-                              $target->{ord}, {func => $func}));
+                          _create_container($target->{ord}, $func));
             }
         } else {
             return if $target == $parent;
 
-            my @deps = ('Treex::PML::StandardFactory'->createContainer(
-                              $target->{ord}, {func => $node->{deprel}}),
+            my @deps = (_create_container(
+                            $target->{ord}, $node->{deprel}),
                         grep $_->{func} ne $node->{deprel}
                              && $_->content != $parent->{ord},
                         ListV($node->{deps}));
@@ -152,5 +170,12 @@
                 { colors => [ (@colours) x ( 1 + @groups / @colours ) ] }
             );
         }
+    }
+
+
+    sub _create_container {
+        my ($ord, $func) = @_;
+        return 'Treex::PML::StandardFactory'->createContainer(
+            $ord, {func => $func})
     }
 }
