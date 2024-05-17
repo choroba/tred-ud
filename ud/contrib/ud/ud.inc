@@ -72,11 +72,35 @@
     }
 
 
-    sub do_edit_attr_hook {
-        my ($attr, $node) = @_;
-        return unless 'deprel' eq $attr;
-        edit_deprel($node);
+    {   my %DISPATCH = (
+            deprel  => \&edit_deprel,
+        );
+        sub do_edit_attr_hook {
+            my ($attr, $node) = @_;
+            return unless $attr =~ /^(?:deprel|upostag|lemma|feats)$/;
+
+            $DISPATCH{$attr}->($node) if exists $DISPATCH{$attr};
+        }
     }
+
+
+    sub edit_this_upos {
+        ChangingFile(0);
+        EditAttribute($this, 'upostag');
+    }
+
+
+    sub edit_this_lemma {
+        ChangingFile(0);
+        EditAttribute($this, 'lemma');
+    }
+
+
+    sub edit_this_feats {
+        ChangingFile(0);
+        EditAttribute($this, 'feats');
+    }
+
 
     sub edit_this_deprel {
         edit_deprel($this);
@@ -96,6 +120,8 @@
             my $dialog = $grp->toplevel->DialogBox(
                 -title   => 'Deprel',
                 -buttons => ['OK', 'Cancel']);
+            $dialog->bind('<Escape>' => sub {
+                              $dialog->{selected_button} = 'Cancel' });
             my $list = $dialog->add(
                 BrowseEntry => -label    => 'deprel',
                                -variable => \(my $choice = $node->{deprel})

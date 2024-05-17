@@ -3,6 +3,9 @@
 #define ud
 #binding-context UD
 # bind edit_this_deprel to d menu Edit DepRel
+# bind edit_this_upos to p menu Edit POS
+# bind edit_this_lemma to l menu Edit Lemma
+# bind edit_this_feats to f menu Edit Features
 
 #include "ud.inc"
 #endif ud

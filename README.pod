@@ -33,6 +33,10 @@ Pressing C<d> opens a dialog box to edit the current node's dependency type.
 If previously an enhanced dependency of the same type as the basic dependency
 existed, it is changed together with it, otherwise, it stays unchanged.
 
+=item *
+
+Pressing C<l>, C<f>, and C<p> edits lemma, features, and POS, respectively.
+
 =head1 INSTALLATION
 
 Select the extension in TrEd via Setup -> Manage Extensions -> Get New
