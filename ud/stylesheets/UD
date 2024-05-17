@@ -13,7 +13,6 @@ style: <?
     my $is_parent_in_deps = grep $_->content == $this->parent->{ord}
                                  && $_->{func} eq $this->{deprel},
                             ListV($this->{deps});
-    warn $this->{ord}, ' ', $is_parent_in_deps ? 'yes' : 'no';
 
     my $coords = join '&', 'n,n,p,p', map {
         my ($parent, $func) = ($_->content, $_->{func});
@@ -27,8 +26,6 @@ style: <?
     my $smooth = join '&', '0', ('1') x @deps;
     my $hints = join '&', "", map "$_->{func}", @deps;
     my $deco = join '&', "", map "shape=text;font=SansSerif 9;fill=magenta;coords=n,n;start=20;text=$_->{func}", @deps;
-
-    warn "\t$colours | $widths";
 
     "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
     . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}"
