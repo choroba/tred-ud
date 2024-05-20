@@ -3,15 +3,28 @@ hint:
 text: ${text}
 
 node: ${id}<? '#{grey}' if $${ord} =~ /\./ ?>${form}<? $${lemma} && $${lemma} ne $${form} ? '#{brown}.${lemma}' : "" ?>
-node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}
+node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}<?
+      if (my @parent_deps = grep $_->content == $this->parent->{ord},
+                            ListV($this->{deps})
+      ) {
+          if (my @ex = grep $_->{func} =~ /^\Q$this->{deprel}\E./,
+                       @parent_deps
+          ) {
+              '#{BlueViolet}' . $ex[0]{func} =~ s/^\Q$this->{deprel}//r
+          } elsif (my @different = grep $_->{func} ne $this->{deprel},
+                                   @parent_deps
+          ) {
+              '#{Violet}/' . $different[0]{func}
+          } else { "" }
+      } else { "" }
+ ?>
 
 style: <?
     my @deps = grep {
         ($_->content // 0) ne ($this->parent->{ord} // 0)
     } ListV($this->{deps});
 
-    my $is_parent_in_deps = grep $_->content == $this->parent->{ord}
-                                 && $_->{func} eq $this->{deprel},
+    my $is_parent_in_deps = grep $_->content == $this->parent->{ord},
                             ListV($this->{deps});
 
     my $coords = join '&', 'n,n,p,p', map {
