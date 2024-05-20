@@ -53,11 +53,22 @@
     sub get_value_line_hook {
         my ($doc, $tree_no) = @_;
         my $tree = $doc->tree($tree_no);
-        my @nodes = sort { $a->{ord} <=> $b->{ord} }
-                    grep $_->{ord} !~ /\./,
-                    $tree->descendants;
+        my %by_ord;
+        my %mw;
+        if ($tree->{multiword}) {
+            %by_ord = map { $_->{ord}, $_ } $tree->descendants;
+            @mw{ ListV($_->{nodes}) } = () for ListV($tree->{multiword});
+        }
+        my @nodes = sort {
+            ($a->{ord} // $a->{nodes}[0])
+            <=>
+            ($b->{ord} // $b->{nodes}[0])
+        } ListV($tree->{multiword}), grep $_->{ord} !~ /\./
+                                          && ! exists $mw{ $_->{ord} },
+                                     $tree->descendants;
 
-        return [ map { [ $_->{form}, $_ ],
+        return [ map { [ $_->{form},
+                         $_->{ord} ? $_ : @by_ord{ ListV($_->{nodes}) } ],
                        ((grep 'SpaceAfter=No' eq $_, ListV($_->{misc}))
                            ? () : [ ' ' ])
                      } @nodes ]
