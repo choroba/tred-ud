@@ -6,6 +6,46 @@ ud - TrEd extension to display and edit Universal Dependencies
 
 =head1 DESCRIPTION
 
+=head2 Stylesheet
+
+=over 2
+
+=item *
+
+The word form is displayed as a black label of each node, the label is grey
+for empty nodes. The part of speech tag is displayed in dark cyan.
+
+=item *
+
+As each non-root node must have a single parent, the dependency type is shown
+as a blue label of the child node.
+
+=item *
+
+The lemma is displayed only if it is different from the word form to narrow
+the trees.
+
+=item *
+
+If the enhanced dependency is the same as the basic one, it is not shown at
+all. If there is an additional dependency, it is shown as an orange curved
+arrow with the dependency type shown in magenta near the start of the arrow.
+If the basic dependency is not duplicated in the enhanced one, the tree edge
+is coloured in cyan instead of grey and is thinner. If the enhanced dependency
+has the same parent as the basic one but a different type, the type can be
+displayed in two ways: if it begins with the basic type, only the extra
+characters are displayed in blue violet, otherwise, it is displayed full in
+violet after a slash.
+
+=item *
+
+An expanded contraction is represented by a dashed area covering the
+individual words.
+
+=back
+
+=head2 Editing
+
 =over 2
 
 =item *
@@ -36,6 +76,8 @@ existed, it is changed together with it, otherwise, it stays unchanged.
 =item *
 
 Pressing C<l>, C<f>, and C<p> edits lemma, features, and POS, respectively.
+
+=back
 
 =head1 INSTALLATION
 
