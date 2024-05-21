@@ -82,6 +82,69 @@
     }
 
 
+    sub connect_right {
+        connect_(1);
+    }
+
+    sub connect_left {
+        connect_(-1)
+    }
+
+    sub connect_ {
+        my ($direction) = @_;
+
+        return if -1 != index $this->{ord}, '.';
+
+        my @nodes = ($this->{ord}, $this->{ord} + $direction);
+
+        my $exists;
+        for my $d ($root->descendants) {
+            ++$exists if $d->{ord} eq $nodes[1] || $d->{ord} eq $nodes[0];
+            return if $d->{ord} =~ /^($nodes[0]|$nodes[1])\./;
+        }
+        return unless 2 == $exists;
+
+        my $group;
+        for my $mw (ListV($root->{multiword})) {
+            for my $node (ListV($mw->{nodes})) {
+                next unless $node == $nodes[0] || $node == $nodes[1];
+
+                if ($group) {
+                    if ($group != $mw) {
+                        questionQuery('Invalid Operation',
+                                      'Merging groups not implemented.',
+                                      'OK');
+                        return
+
+                    }
+                    ChangingFile(1);
+                    $root->{multiword} = List(grep $_ != $group,
+                                              ListV($root->{multiword}));
+                    return
+
+                } else {
+                    $group = $mw;
+                }
+            }
+        }
+        if (! $group) {
+            my $form = QueryString('Contracted Form', 'Form');
+            return unless length $form;
+
+            ChangingFile(1);
+            $group = 'Treex::PML::Factory'->createStructure({
+                nodes => List(sort { $a <=> $b } @nodes),
+                form  => $form});
+            AddToList($root, 'multiword', $group);
+        } else {
+            ChangingFile(1);
+            $group->{nodes} = List(sort { $a <=> $b }
+                                   uniq(ListV($group->{nodes}), @nodes));
+            Redraw();
+        }
+    }
+
+
     sub get_nodelist_hook {
         my ($doc, $treeno, $current, $show) = @_;
         my $tree = $doc->tree($treeno);
