@@ -204,9 +204,10 @@
                 $node->{deps} = List(grep $_->content != $target->{ord},
                                      ListV($node->{deps}));
             } else {
-                my $func = ($target == $parent)
-                               ? $node->{deprel}
-                               : QueryString('Enhanced Dependency', 'deprel');
+                my $func = QueryString(
+                    'Enhanced Dependency',
+                    'deprel',
+                    ($target == $parent) ? $node->{deprel} : "");
                 return 'stop' unless length $func;
 
                 ChangingFile(1);
