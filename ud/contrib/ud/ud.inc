@@ -59,7 +59,7 @@
             %by_ord = map { $_->{ord}, $_ } $tree->descendants;
             @mw{ ListV($_->{nodes}) } = () for ListV($tree->{multiword});
         }
-        my @nodes = sort {
+        my @nodes = sort {  # by_ord not needed, we grep only int ords.
             ($a->{ord} // $a->{nodes}[0])
             <=>
             ($b->{ord} // $b->{nodes}[0])
@@ -75,10 +75,17 @@
     }
 
 
+    sub by_ord {
+        (int($a->{ord}) <=> int($b->{ord}))
+        ||
+        (($a->{ord} =~ /\.([0-9]+)/)[0] <=> ($b->{ord} =~ /\.([0-9]+)/)[0])
+    }
+
+
     sub get_nodelist_hook {
         my ($doc, $treeno, $current, $show) = @_;
         my $tree = $doc->tree($treeno);
-        return [[$root, sort { $a->{ord} <=> $b->{ord} } $tree->descendants],
+        return [[$root, sort by_ord $tree->descendants],
                 $current]
     }
 
@@ -155,6 +162,7 @@
         }
     }
 
+
     sub node_release_hook {
         my ($node, $target, $mod) = @_;
         ChangingFile(0);
@@ -198,6 +206,7 @@
 
 
     {   my @colours = qw( plum red orange pink magenta violet );
+
         sub after_redraw_hook {
             return unless $root->{multiword};
 
