@@ -75,6 +75,10 @@ existed, it is changed together with it, otherwise, it stays unchanged.
 
 =item *
 
+Pressing C<Insert> inserts a new null node as the leftest son of the
+current node, the user is asked for its form.
+
+=item *
 Pressing C<l>, C<f>, and C<p> edits lemma, features, and POS, respectively.
 
 =back

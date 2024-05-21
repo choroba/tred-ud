@@ -6,6 +6,7 @@
 # bind edit_this_upos to p menu Edit POS
 # bind edit_this_lemma to l menu Edit Lemma
 # bind edit_this_feats to f menu Edit Features
+# bind insert_null to Insert menu Insert Null
 
 #include "ud.inc"
 #endif ud

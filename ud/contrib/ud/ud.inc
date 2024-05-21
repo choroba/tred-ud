@@ -89,6 +89,35 @@
                 $current]
     }
 
+    sub insert_null {
+        ChangingFile(1);
+        my $ord = [split /\./, $this->{ord}];
+        $_ //= 0 for @$ord[0, 1];
+        ++$ord->[1];
+        my @renumber = grep int($_->{ord}) == $ord->[0]
+                            && ($_->{ord} =~ /\.([0-9]+)$/)[0] >= $ord->[1],
+                       $root->descendants;
+        for my $ref ($root->descendants) {
+            for my $dep (ListV($ref->{deps})) {
+                for my $ref_r (grep $_->{ord} eq $dep->content, @renumber) {
+                    my @n = split /\./, $dep->content;
+                    $dep->set_content(join '.', $n[0], $n[1] + 1);
+                }
+            }
+        }
+        for my $r (@renumber) {
+            my @n = split /\./, $r->{ord};
+            $r->{ord} = join '.', $n[0], $n[1] + 1;
+        }
+        # Null nodes con't be in ranges, no need to check multiword.
+
+        my $new = PlainNewSon($this);
+        $new->set_type_by_name($root->type->schema, 'ud.node.type');
+        $new->{ord} = join '.', @$ord;
+        $new->{$_} = '_' for qw( deprel lemma upostag );
+        EditAttribute($new, 'form');
+    }
+
 
     {   my %DISPATCH = (
             deprel  => \&edit_deprel,
