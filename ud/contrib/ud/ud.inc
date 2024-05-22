@@ -151,6 +151,7 @@
                 $current]
     }
 
+
     sub insert_null {
         ChangingFile(1);
         my $ord = [split /\./, $this->{ord}];
