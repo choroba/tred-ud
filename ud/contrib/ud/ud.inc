@@ -140,7 +140,6 @@
             ChangingFile(1);
             $group->{nodes} = List(sort { $a <=> $b }
                                    uniq(ListV($group->{nodes}), @nodes));
-            Redraw();
         }
     }
 
