@@ -7,9 +7,9 @@
     Universal Dependencies in PML
   </description>
 
-  <root name="ud" type="ud.type" role="#TREES"/>
+  <root name="ud" type="ud.type"/>
   <type name="ud.type">
-    <sequence content_pattern="(sent+)">
+    <sequence content_pattern="(sent+)" role="#TREES">
       <element name="sent" type="ud.sent.type"/>
     </sequence>
   </type>
@@ -31,7 +31,7 @@
         </list>
       </member>
       <member name="multiword">
-        <list>
+        <list ordered="1">
           <structure>
             <member name="nodes">
               <list ordered="1"><cdata format="any"/></list>
@@ -50,7 +50,7 @@
         <list type="ud.node.type" ordered="1"/>
       </member>
       <member name="ord" role="#ORDER" required="1">
-        <cdata format="number"/>
+        <cdata format="decimal"/>
       </member>
       <member name="form"><cdata format="any"/></member>
       <member name="deprel"><cdata format="any"/></member>
@@ -102,7 +102,7 @@
     <list ordered="1">
       <container>
         <attribute name="func"><cdata format="any"/></attribute>
-        <cdata format="number"/>
+        <cdata format="decimal"/>
       </container>
     </list>
   </type>
