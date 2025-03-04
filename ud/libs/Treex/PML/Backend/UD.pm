@@ -16,7 +16,7 @@ sub test {
     my $in = open_backend($filename, 'r', $encoding) or die "$filename: $!";
     while (<$in>) {
         return unless /^#/;
-        return 1 if /^# (?:new(?:doc|par)\s+id|sent_id|text)(?: =)? ./;
+        return 1 if /^# (?:new(?:doc|par)\s+id|text)(?: =)? ./;
     }
 }
 
