@@ -8,7 +8,7 @@
   <repository href="http://ufal.mff.cuni.cz/tred/extensions/external/"/>
   <title>TrEd Extension to Work with Universal Dependencies</title>
   <version>0.27</version>
-  <copyright year="2018-2024">Jan Štěpánek</copyright>
+  <copyright year="2018-2025">Jan Štěpánek</copyright>
   <description>Makes it possible to view and edit UD files.</description>
   <require>
     <tred min_version="2.4936"/>
