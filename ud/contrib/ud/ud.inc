@@ -78,7 +78,7 @@
     sub by_ord {
         (int($a->{ord}) <=> int($b->{ord}))
         ||
-        (($a->{ord} =~ /\.([0-9]+)/)[0] <=> ($b->{ord} =~ /\.([0-9]+)/)[0])
+        ((($a->{ord} =~ /\.([0-9]+)/)[0] // 0) <=> (($b->{ord} =~ /\.([0-9]+)/)[0] // 0))
     }
 
 
@@ -314,6 +314,11 @@
         }
     }
 
+    sub toggle_enhanced_dependecies_visibility {
+        ChangingFile(0);
+        $UD::ENHANCED_DEPS_HIDDEN = ! $UD::ENHANCED_DEPS_HIDDEN;
+        Redraw();
+    }
 
     sub _create_container {
         my ($ord, $func) = @_;

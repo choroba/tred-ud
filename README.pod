@@ -42,6 +42,12 @@ violet after a slash.
 An expanded contraction is represented by a dashed area covering the
 individual words.
 
+=item *
+
+You can toggle the visibility of enhanced dependencies by pressing C<Ctrl +
+e>. This changes the colour of normal edges from grey to dark blue and edges
+from empty nodes from cyan to grey.
+
 =back
 
 =head2 Editing

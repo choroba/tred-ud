@@ -9,6 +9,7 @@
 # bind insert_null to Insert menu Insert Null
 # bind connect_right to Ctrl+Right menu Connect Right
 # bind connect_left  to Ctrl+Left  menu Connect Left
+# bind toggle_enhanced_dependecies_visibility to Ctrl+e menu Toggle Enhanced Dependencies Visibility
 
 #include "ud.inc"
 #endif ud

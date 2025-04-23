@@ -4,45 +4,52 @@ text: ${text}
 
 node: ${id}<? '#{grey}' if $${ord} =~ /\./ ?>${form}<? $${lemma} && $${lemma} ne $${form} ? '#{brown}.${lemma}' : "" ?>
 node: #{darkcyan}${upostag}<? $${id} ? "" : "." ?>#{blue}${deprel}<?
-      if (my @parent_deps = grep $_->content == $this->parent->{ord},
-                            ListV($this->{deps})
-      ) {
-          if (my @ex = grep $_->{func} =~ /^\Q$this->{deprel}\E./,
-                       @parent_deps
+      if (! $UD::ENHANCED_DEPS_HIDDEN) {
+          if (my @parent_deps = grep $_->content == $this->parent->{ord},
+                                ListV($this->{deps})
           ) {
-              '#{BlueViolet}' . $ex[0]{func} =~ s/^\Q$this->{deprel}//r
-          } elsif (my @different = grep $_->{func} ne $this->{deprel},
-                                   @parent_deps
-          ) {
-              '#{Violet}/' . $different[0]{func}
+              if (my @ex = grep $_->{func} =~ /^\Q$this->{deprel}\E./,
+                           @parent_deps
+              ) {
+                  '#{BlueViolet}' . $ex[0]{func} =~ s/^\Q$this->{deprel}//r
+              } elsif (my @different = grep $_->{func} ne $this->{deprel},
+                                       @parent_deps
+              ) {
+                  '#{Violet}/' . $different[0]{func}
+              } else { "" }
           } else { "" }
       } else { "" }
  ?>
 
 style: <?
-    my @deps = grep {
-        ($_->content // 0) ne ($this->parent->{ord} // 0)
-    } ListV($this->{deps});
+    if (! $UD::ENHANCED_DEPS_HIDDEN) {
+        my @deps = grep {
+            ($_->content // 0) ne ($this->parent->{ord} // 0)
+        } ListV($this->{deps});
 
-    my $is_parent_in_deps = grep $_->content == $this->parent->{ord},
-                            ListV($this->{deps});
+        my $is_parent_in_deps = grep $_->content == $this->parent->{ord},
+                                ListV($this->{deps});
 
-    my $coords = join '&', 'n,n,p,p', map {
-        my ($parent, $func) = ($_->content, $_->{func});
-        my $expression = $parent ? "[ord=$parent]" : '[! $this->root !]';
-        "n,n,(x$expression+xn)/2,(y$expression+yn)/2.5,x$expression,y$expression"
-    } @deps;
+        my $coords = join '&', 'n,n,p,p', map {
+            my ($parent, $func) = ($_->content, $_->{func});
+            my $expression = $parent ? "[ord=$parent]" : '[! $this->root !]';
+            "n,n,(x$expression+xn)/2,(y$expression+yn)/2.5,x$expression,y$expression"
+        } @deps;
 
-    my $arrows = join '&', 'none', ('last') x @deps;
-    my $colours = join '&', ($is_parent_in_deps ? 'grey' : 'cyan'), ('orange') x @deps;
-    my $widths = join '&', ($is_parent_in_deps ? '2' : '1'), ('1') x @deps;
-    my $smooth = join '&', '0', ('1') x @deps;
-    my $hints = join '&', "", map "$_->{func}", @deps;
-    my $deco = join '&', "", map "shape=text;font=SansSerif 9;fill=magenta;coords=n,n;start=20;text=$_->{func}", @deps;
+        my $arrows = join '&', 'none', ('last') x @deps;
+        my $colours = join '&', ($is_parent_in_deps ? 'grey' : 'cyan'), ('orange') x @deps;
+        my $widths = join '&', ($is_parent_in_deps ? '2' : '1'), ('1') x @deps;
+        my $smooth = join '&', '0', ('1') x @deps;
+        my $hints = join '&', "", map "$_->{func}", @deps;
+        my $deco = join '&', "", map "shape=text;font=SansSerif 9;fill=magenta;coords=n,n;start=20;text=$_->{func}", @deps;
 
-    "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
-    . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}"
-    . "#{Line-decoration:$deco}"
-    . ('#{Oval-fill:whitesmoke}#{CurrentOval-fill:pink}#{Oval-outline:cyan}' x $this->{ord} =~ /\./);
-
+        "#{Line-coords:$coords}#{Line-fill:$colours}#{Line-arrow:$arrows}"
+        . "#{Line-width:$widths}#{Line-smooth:$smooth}#{Line-hint:$hints}"
+        . "#{Line-decoration:$deco}"
+        . ('#{Oval-fill:whitesmoke}#{CurrentOval-fill:pink}#{Oval-outline:cyan}' x $this->{ord} =~ /\./);
+    } else {
+        my $is_empty = $this->{ord} =~ /\./;
+        '#{Line-coords:n,n,p,p}#{Line-fill:' . ($is_empty ? 'grey' : '#000080') . '}#{Line-width:1}'
+        . ('#{Oval-fill:whitesmoke}#{CurrentOval-fill:pink}#{Oval-outline:cyan}' x $is_empty)
+    }
 ?>
