@@ -45,7 +45,8 @@ individual words.
 =item *
 
 You can toggle the visibility of enhanced dependencies by pressing C<Ctrl +
-e>. This changes the colour of normal edges from grey to dark blue, empty nodes are not diplayed at all.
+e>. This changes the colour of normal edges from grey to dark blue, empty
+nodes are not displayed at all.
 
 =back
 
