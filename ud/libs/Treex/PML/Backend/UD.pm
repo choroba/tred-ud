@@ -188,7 +188,7 @@ sub _serialize_doc_and_par {
 
 sub _serialize_deps {
     my ($deps) = @_;
-    return '_' unless @$deps;
+    return '_' unless @{ $deps // [] };
     return join '|',
            map "$_->{'#content'}:$_->{func}",
            sort { $a->{'#content'} <=> $b->{'#content'} }
