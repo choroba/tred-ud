@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tred_extension xmlns="http://ufal.mff.cuni.cz/pdt/pml/" install_size="397845">
+<tred_extension xmlns="http://ufal.mff.cuni.cz/pdt/pml/" install_size="398120">
   <head>
     <schema href="tred_extension_schema.xml"/>
   </head>
@@ -7,7 +7,7 @@
   <icon>icons/ud.png</icon>
   <repository href="http://ufal.mff.cuni.cz/tred/extensions/external/"/>
   <title>TrEd Extension to Work with Universal Dependencies</title>
-  <version>0.30</version>
+  <version>0.31</version>
   <copyright year="2018-2025">Jan Štěpánek</copyright>
   <description>Makes it possible to view and edit UD files.</description>
   <require>
