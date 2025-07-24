@@ -280,7 +280,8 @@
         } else {
             return if $target == $parent;
 
-            my $with_enhanced = ! (defined $mod && $mod eq 'Shift');
+            my $with_enhanced = ! (defined $mod && $mod eq 'Shift'
+                                   || $UD::ENHANCED_DEPS_HIDDEN);
             my @deps = ($with_enhanced
                             ? _create_container($target->{ord},
                                                 $node->{deprel})

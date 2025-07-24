@@ -44,9 +44,9 @@ individual words.
 
 =item *
 
-You can toggle the visibility of enhanced dependencies by pressing C<Ctrl +
+You can toggle the visibility of enhanced dependencies by pressing C<Control +
 e>. This changes the colour of normal edges from grey to dark blue, empty
-nodes are not displayed at all.
+nodes are not displayed at all. Also, dropping nodes now behaves as if C<Shift> was pressed, i.e. no enhanced dependencies are created.
 
 =back
 
@@ -58,7 +58,8 @@ nodes are not displayed at all.
 
 Dropping node C<a> on node C<b> attaches node C<a> to node C<b>. An enhanced
 dependency is created together with the basic one, if an enhanced dependency
-existed to the old or new parent, it is removed.
+existed to the old or new parent, it is removed. (Under C<Control + E>, this
+works as if C<Shift> was pressed, see below).
 
 =item *
 
