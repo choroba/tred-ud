@@ -11,6 +11,11 @@ use strict;
 
 use Treex::PML::IO qw{ open_backend close_backend };
 
+use constant {ID   => \'id',
+              TEXT => \'text',
+              DOC  => \'doc',
+              PAR  => \'par'};
+
 sub test {
     my ($filename, $encoding) = @_;
     my $in = open_backend($filename, 'r', $encoding) or die "$filename: $!";
@@ -37,25 +42,32 @@ sub read {
             );
         }
 
-        if (/^#\s*sent_id(?:\s*=\s*|\s+)(\S+)/) {
-            my $sent_id = $1;
-            substr $sent_id, 0, 0, 'PML-' if $sent_id !~ /^PML-/;
-            $root->{id} = $sent_id;
-            $doc->append_tree($root, $doc->lastTreeNo);
+        if (/^#/) {
+            $root->{comment} //= 'Treex::PML::Factory'->createList([]);
 
-        } elsif (/^#\s*text\s*=\s*(.*)/) {
-            $root->{text} = $1;
+            if (/^#\s*sent_id(?:\s*=\s*|\s+)(\S+)/) {
+                my $sent_id = $1;
+                substr $sent_id, 0, 0, 'PML-' if $sent_id !~ /^PML-/;
+                $root->{id} = $sent_id;
+                $doc->append_tree($root, $doc->lastTreeNo);
+                $_ = ID;
+
+            } elsif (/^#\s*text\s*=\s*(.*)/) {
+                $root->{text} = $1;
+                $_ = TEXT;
+
+            } elsif (/^#\s+new(doc|par)(?:\s+id = (.*))?/) {
+                $root->{$1} = $2;
+                $_ = ('doc' eq $1) ? DOC : PAR;
+
+            } else {
+                substr $_, 0, 1, "";
+            }
+            $root->{comment}->push($_);
 
         } elsif (/^$/) {
             _create_structure($root);
             undef $root;
-
-        } elsif (/^#\s+new(doc|par)(?:\s+id = (.*))?/) {
-            $root->{$1} = $2;
-
-        } elsif (/^#/) {
-            $root->{comment} = 'Treex::PML::Factory'->createList([
-                @{ $root->{comment} || [] }, substr $_, 1 ]);
 
         } else {
             my ($n, $form, $lemma, $upos, $xpos, $feats, $head, $deprel,
@@ -102,12 +114,13 @@ sub read {
 sub write {
     my ($fh, $doc) = @_;
     for my $root ($doc->trees) {
-        _serialize_doc_and_par($root, $fh);
 
         $root->{id} =~ s/^PML-//;
-        print {$fh} "# sent_id = ", $root->{id}, "\n";
-        print {$fh} "# text = ", $root->{text}, "\n" if exists $root->{text};
-        print {$fh} map "#$_\n", @{ $root->{comment} };
+        for my $c ($root->{comment}->values) {
+            print {$fh} '#', ref $c ? _serialize_comment($c, $root)
+                                    : $c,
+                             "\n";
+        }
         for my $node (sort { $a->{ord} <=> $b->{ord} } $root->descendants) {
             if (my ($mw_idx)
                 = grep $root->{multiword}[$_]{nodes}[0] == $node->{ord},
@@ -139,6 +152,20 @@ sub write {
     return 1
 }
 
+
+{   my %PREFIX = (id => 'sent',
+                  par => 'newpar',
+                  doc => 'newdoc',
+                  text => 'text');
+    my %ID_SUFFIX = (id => '_', par => ' ', doc => ' ');
+    sub _serialize_comment {
+        my ($c, $root) = @_;
+        return " $PREFIX{$$c}"
+            . ((exists $ID_SUFFIX{$$c} ? "$ID_SUFFIX{$$c}id" : "")
+               . " = $root->{$$c}")
+              x !! length $root->{$$c}
+    }
+}
 
 sub _serialize_misc {
     my ($misc) = @_;
@@ -172,19 +199,6 @@ sub _create_multiword {
         )
     ]);
 }
-
-
-sub _serialize_doc_and_par {
-    my ($root, $fh) = @_;
-    for my $attr (qw( doc par )) {
-        if (exists $root->{$attr}) {
-            print {$fh} "# new$attr";
-            print {$fh} ' id = ', $root->{$attr} if length $root->{$attr};
-            print {$fh} "\n";
-        };
-    }
-}
-
 
 sub _serialize_deps {
     my ($deps) = @_;
