@@ -43,7 +43,7 @@ sub read {
         }
 
         if (/^#/) {
-            $root->{comment} //= 'Treex::PML::Factory'->createList([]);
+            $root->{comments} //= 'Treex::PML::Factory'->createSeq;
 
             if (/^#\s*sent_id(?:\s*=\s*|\s+)(\S+)/) {
                 my $sent_id = $1;
@@ -63,7 +63,8 @@ sub read {
             } else {
                 substr $_, 0, 1, "";
             }
-            $root->{comment}->push($_);
+            $root->{comments}->push_element(ref ? (special => $$_)
+                                                : (comment => $_));
 
         } elsif (/^$/) {
             _create_structure($root);
@@ -72,7 +73,7 @@ sub read {
         } else {
             my ($n, $form, $lemma, $upos, $xpos, $feats, $head, $deprel,
                 $deps, $misc) = split /\t/;
-            $_ eq '_' and undef $_
+            ($_ // '_') eq '_' and undef $_
                 for $xpos, $feats, $deps, $misc;
 
             $misc = 'Treex::PML::Factory'->createList(
@@ -116,10 +117,8 @@ sub write {
     for my $root ($doc->trees) {
 
         $root->{id} =~ s/^PML-//;
-        for my $c ($root->{comment}->values) {
-            print {$fh} '#', ref $c ? _serialize_comment($c, $root)
-                                    : $c,
-                             "\n";
+        for my $c ($root->{comments}->elements) {
+            print {$fh} '#', _serialize_comment($c, $root), "\n";
         }
         for my $node (sort { $a->{ord} <=> $b->{ord} } $root->descendants) {
             if (my ($mw_idx)
@@ -160,10 +159,14 @@ sub write {
     my %ID_SUFFIX = (id => '_', par => ' ', doc => ' ');
     sub _serialize_comment {
         my ($c, $root) = @_;
-        return " $PREFIX{$$c}"
-            . ((exists $ID_SUFFIX{$$c} ? "$ID_SUFFIX{$$c}id" : "")
-               . " = $root->{$$c}")
-              x !! length $root->{$$c}
+        return $c->[1] if 'comment' eq $c->[0];
+
+        $c = $c->[1];
+        return " $PREFIX{$c}"
+            . (length($root->{$c})
+               ? (exists $ID_SUFFIX{$c} ? "$ID_SUFFIX{$c}id" : "")
+                 . " = $root->{$c}"
+               : "")
     }
 }
 
