@@ -58,7 +58,7 @@ nodes are not displayed at all. Also, dropping nodes now behaves as if C<Shift> 
 
 Dropping node C<a> on node C<b> attaches node C<a> to node C<b>. An enhanced
 dependency is created together with the basic one, if an enhanced dependency
-existed to the old or new parent, it is removed. (Under C<Control + E>, this
+existed to the old or new parent, it is removed. (Under C<Control + e>, this
 works as if C<Shift> was pressed, see below).
 
 =item *
