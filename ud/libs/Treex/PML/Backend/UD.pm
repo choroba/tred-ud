@@ -33,6 +33,8 @@ sub read {
         use_resources => 1});
     $doc->changeMetaData('schema', $schema);
 
+    my $has_enhanced = 0;
+    my $first_root;
     my $root;
     while (<$fh>) {
         chomp;
@@ -40,6 +42,7 @@ sub read {
             $root = 'Treex::PML::Factory'->createTypedNode(
                     'ud.sent.type', $schema, {}
             );
+            $first_root = $root;
         }
 
         if (/^#/) {
@@ -75,6 +78,7 @@ sub read {
                 $deps, $misc) = split /\t/;
             ($_ // '_') eq '_' and undef $_
                 for $xpos, $feats, $deps, $misc;
+            $has_enhanced = 1 if defined $deps;
 
             $misc = 'Treex::PML::Factory'->createList(
                 [ split /\|/, ($misc // "") ]);
@@ -109,6 +113,7 @@ sub read {
         _create_structure($root);
         warn "Emtpy line missing at the end of input\n";
     }
+    $first_root->{_HAS_ENHANCED} = $has_enhanced;
 }
 
 
