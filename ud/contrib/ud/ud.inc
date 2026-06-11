@@ -46,7 +46,8 @@
             my $stylesheet = $previous_stylesheet // 'UD';
             SetCurrentStylesheet($stylesheet);
         }
-        $UD::ENHANCED_DEPS_HIDDEN = 1 unless $UD::HAS_ENHANCED{$root};
+        my $first_root = $grp->{FSFile}->treeList()->[0];
+        $UD::ENHANCED_DEPS_HIDDEN = ! delete $UD::HAS_ENHANCED{$first_root};
         Redraw() if GUI();
     }
 
