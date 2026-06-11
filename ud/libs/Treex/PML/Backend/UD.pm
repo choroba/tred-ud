@@ -38,11 +38,12 @@ sub read {
     my $root;
     while (<$fh>) {
         chomp;
+        s/\r$//;
         if (/^#/ && ! $root) {
             $root = 'Treex::PML::Factory'->createTypedNode(
                     'ud.sent.type', $schema, {}
             );
-            $first_root = $root;
+            $first_root //= $root;
         }
 
         if (/^#/) {
@@ -113,7 +114,7 @@ sub read {
         _create_structure($root);
         warn "Emtpy line missing at the end of input\n";
     }
-    $first_root->{_HAS_ENHANCED} = $has_enhanced;
+    $UD::HAS_ENHANCED{$first_root} = $has_enhanced;
 }
 
 

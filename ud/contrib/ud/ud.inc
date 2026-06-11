@@ -46,8 +46,7 @@
             my $stylesheet = $previous_stylesheet // 'UD';
             SetCurrentStylesheet($stylesheet);
         }
-        toggle_enhanced_dependecies_visibility()
-            unless delete $root->{_HAS_ENHANCED};
+        $UD::ENHANCED_DEPS_HIDDEN = 1 unless $UD::HAS_ENHANCED{$root};
         Redraw() if GUI();
     }
 
