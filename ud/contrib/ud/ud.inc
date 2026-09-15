@@ -52,21 +52,28 @@
     }
 
 
-    sub get_value_line_hook {
-        my ($doc, $tree_no) = @_;
-        my $tree = $doc->tree($tree_no);
-        my %by_ord;
+    sub is_part_of_multiword {
+        my ($node) = @_;
+        return if ! exists $node->root->{multiword};
+
         my %mw;
+        @mw{ ListV($_->{nodes}) } = () for ListV($node->root->{multiword});
+        return exists $mw{ $node->{ord} }
+    }
+
+
+    sub text_from_nodes {
+        my ($tree) = @_;
+        my %by_ord;
         if ($tree->{multiword}) {
             %by_ord = map { $_->{ord}, $_ } $tree->descendants;
-            @mw{ ListV($_->{nodes}) } = () for ListV($tree->{multiword});
         }
         my @nodes = sort {  # by_ord not needed, we grep only int ords.
             ($a->{ord} // $a->{nodes}[0])
             <=>
             ($b->{ord} // $b->{nodes}[0])
         } ListV($tree->{multiword}), grep $_->{ord} !~ /\./
-                                          && ! exists $mw{ $_->{ord} },
+                                          && ! is_part_of_multiword($_),
                                      $tree->descendants;
 
         return [ map { [ $_->{form},
@@ -74,6 +81,13 @@
                        ((grep 'SpaceAfter=No' eq $_, ListV($_->{misc}))
                            ? () : [ ' ' ])
                      } @nodes ]
+    }
+
+
+    sub get_value_line_hook {
+        my ($doc, $tree_no) = @_;
+        my $tree = $doc->tree($tree_no);
+        return text_from_nodes($tree)
     }
 
 
@@ -298,6 +312,22 @@
         }
         Redraw();
         return 'stop'
+    }
+
+    sub after_edit_attr_hook {
+        my ($node, $attr, $result) = @_;
+        return if ! $result || 'form' ne $attr || ! exists $root->{text};
+
+        questionQuery('form changed',
+                      'Changing form of a node in a multiword group', 'OK')
+            if is_part_of_multiword($node);
+        questionQuery('form changed',
+                      'Changing form of an empty node', 'OK')
+            if -1 != index $node->{ord}, '.';
+
+        my $text = join "", map $_->[0], @{ text_from_nodes($root) };
+        $text =~ s/\s+$//;
+        $root->{text} = $text;
     }
 
 
