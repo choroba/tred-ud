@@ -98,6 +98,12 @@ in a group, the group is deleted.
 
 Pressing C<l>, C<f>, and C<p> edits lemma, features, and POS, respectively.
 
+=item *
+
+Pressing C<Delete> deletes a leaf node. You can't delete a node that has
+children, is the root of a tree, is part of a multiword group, or is a head of
+an enhanced depenency.
+
 =back
 
 =head1 INSTALLATION

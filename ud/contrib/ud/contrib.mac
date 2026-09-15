@@ -10,7 +10,7 @@
 # bind connect_right to Ctrl+Right menu Connect Right
 # bind connect_left  to Ctrl+Left  menu Connect Left
 # bind toggle_enhanced_dependecies_visibility to Ctrl+e menu Toggle Enhanced Dependencies Visibility
-
+# bind delete_node to Delete menu Delete Node
 #include "ud.inc"
 #endif ud
 

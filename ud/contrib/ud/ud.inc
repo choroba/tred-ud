@@ -271,6 +271,67 @@
     }
 
 
+    sub delete_node {
+        ChangingFile(0);
+        if (is_part_of_multiword($this)) {
+            questionQuery('Deleting Multiword Part',
+                          'Cannot delete multiword part',
+                          'OK');
+            return
+        }
+        return if $this->children || ! $this->parent;
+
+        my $ord = $this->{ord};
+        my @in_deps;
+        for my $node ($root->descendants) {
+            push @in_deps, $node->{ord}
+                if exists $node->{deps}
+                && grep $_->content == $ord, ListV($node->{deps});
+        }
+        if (@in_deps) {
+            questionQuery('Deleting Referenced Node',
+                          "Node found in deps of the following nodes: @in_deps",
+                          'OK');
+            return
+        }
+
+        ChangingFile(1);
+        if (-1 == index $ord, '.') {
+            for my $node ($root->descendants) {
+                --$node->{ord} if $node->{ord} > $ord;
+                if (exists $node->{deps}) {
+                    $node->{deps} = List(
+                        map _create_container($_->content > $ord
+                                                  ? $_->content - 1
+                                                  : $_->content,
+                                              $_->{func}),
+                        ListV($node->{deps}));
+                }
+
+                for my $dep (ListV($node->{deps})) {
+                    my $dep_ord = $dep->content;
+                    $dep->set_content($dep_ord - 1) if $dep_ord > $ord;
+                }
+            }
+
+            if (exists $root->{multiword}) {
+                $root->{multiword} = List(map {
+                    'Treex::PML::StandardFactory'->createStructure(
+                        {form  => $_->{form},
+                         misc  => $_->{misc},
+                         nodes => List(
+                             map { warn "NODE $_"; $_ > $ord ? $_ - 1 : $_ } ListV($_->{nodes}))})
+                } ListV($root->{multiword}));
+            }
+        }
+
+        # Lowlevel function needed, we don't want DeleteLeafNode to handle ord.
+        my $p = $this->parent;
+        $this->destroy_leaf;
+        $this = $p;
+        update_text();
+    }
+
     sub node_release_hook {
         my ($node, $target, $mod) = @_;
         ChangingFile(0);
@@ -314,6 +375,7 @@
         return 'stop'
     }
 
+
     sub after_edit_attr_hook {
         my ($node, $attr, $result) = @_;
         return if ! $result || 'form' ne $attr || ! exists $root->{text};
@@ -325,6 +387,11 @@
                       'Changing form of an empty node', 'OK')
             if -1 != index $node->{ord}, '.';
 
+        update_text();
+    }
+
+
+    sub update_text {
         my $text = join "", map $_->[0], @{ text_from_nodes($root) };
         $text =~ s/\s+$//;
         $root->{text} = $text;
@@ -347,11 +414,13 @@
         }
     }
 
+
     sub toggle_enhanced_dependecies_visibility {
         ChangingFile(0);
         $UD::ENHANCED_DEPS_HIDDEN = ! $UD::ENHANCED_DEPS_HIDDEN;
         Redraw();
     }
+
 
     sub _create_container {
         my ($ord, $func) = @_;
