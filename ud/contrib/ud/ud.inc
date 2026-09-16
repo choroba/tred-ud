@@ -391,10 +391,18 @@
     }
 
 
+    sub after_edit_node_hook {
+        my ($node, $result) = @_;
+        update_text() if $result;
+        return
+    }
+
+
     sub update_text {
         my $text = join "", map $_->[0], @{ text_from_nodes($root) };
         $text =~ s/\s+$//;
         $root->{text} = $text;
+        return
     }
 
 
