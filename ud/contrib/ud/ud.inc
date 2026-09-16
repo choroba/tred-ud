@@ -320,7 +320,7 @@
                         {form  => $_->{form},
                          misc  => $_->{misc},
                          nodes => List(
-                             map { warn "NODE $_"; $_ > $ord ? $_ - 1 : $_ } ListV($_->{nodes}))})
+                             map $_ > $ord ? $_ - 1 : $_, ListV($_->{nodes}))})
                 } ListV($root->{multiword}));
             }
         }
